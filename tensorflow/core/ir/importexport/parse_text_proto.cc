@@ -35,7 +35,8 @@ namespace {
 // Error collector that simply ignores errors reported.
 class NoOpErrorCollector : public tensorflow::protobuf::io::ErrorCollector {
  public:
-  void AddError(int line, int column, const std::string& message) override {}
+  void RecordError(int line, tensorflow::protobuf::io::ColumnNumber column,
+                   absl::string_view message) override {}
 };
 }  // namespace
 

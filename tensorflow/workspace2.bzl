@@ -404,14 +404,9 @@ def _tf_repositories():
     tf_http_archive(
         name = "com_google_protobuf",
         patch_file = ["//third_party/protobuf:protobuf.patch"],
-        sha256 = "f66073dee0bc159157b0bd7f502d7d1ee0bc76b3c1eac9836927511bdc4b3fc1",
-        strip_prefix = "protobuf-3.21.9",
-        system_build_file = "//third_party/systemlibs:protobuf.BUILD",
-        system_link_files = {
-            "//third_party/systemlibs:protobuf.bzl": "protobuf.bzl",
-            "//third_party/systemlibs:protobuf_deps.bzl": "protobuf_deps.bzl",
-        },
-        urls = tf_mirror_urls("https://github.com/protocolbuffers/protobuf/archive/v3.21.9.zip"),
+        sha256 = "f645e6e42745ce922ca5388b1883ca583bafe4366cc74cf35c3c9299005136e2",
+        strip_prefix = "protobuf-5.28.3",
+        urls = tf_mirror_urls("https://github.com/protocolbuffers/protobuf/archive/refs/tags/v5.28.3.zip"),
     )
 
     tf_http_archive(
@@ -466,23 +461,13 @@ def _tf_repositories():
     # WARNING: make sure ncteisen@ and vpai@ are cc-ed on any CL to change the below rule
     tf_http_archive(
         name = "com_github_grpc_grpc",
-        sha256 = "b956598d8cbe168b5ee717b5dafa56563eb5201a947856a6688bbeac9cac4e1f",
-        strip_prefix = "grpc-b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd",
+        sha256 = "afbc5d78d6ba6d509cc6e264de0d49dcd7304db435cbf2d630385bacf49e066c",
+        strip_prefix = "grpc-1.68.2",
         system_build_file = "//third_party/systemlibs:grpc.BUILD",
         patch_file = [
-            "//third_party/grpc:generate_cc_env_fix.patch",
-            "//third_party/grpc:register_go_toolchain.patch",
+            "//third_party/grpc:grpc.patch",
         ],
-        system_link_files = {
-            "//third_party/systemlibs:BUILD.bazel": "bazel/BUILD",
-            "//third_party/systemlibs:grpc.BUILD": "src/compiler/BUILD",
-            "//third_party/systemlibs:grpc.bazel.grpc_deps.bzl": "bazel/grpc_deps.bzl",
-            "//third_party/systemlibs:grpc.bazel.grpc_extra_deps.bzl": "bazel/grpc_extra_deps.bzl",
-            "//third_party/systemlibs:grpc.bazel.cc_grpc_library.bzl": "bazel/cc_grpc_library.bzl",
-            "//third_party/systemlibs:grpc.bazel.generate_cc.bzl": "bazel/generate_cc.bzl",
-            "//third_party/systemlibs:grpc.bazel.protobuf.bzl": "bazel/protobuf.bzl",
-        },
-        urls = tf_mirror_urls("https://github.com/grpc/grpc/archive/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd.tar.gz"),
+        urls = tf_mirror_urls("https://github.com/grpc/grpc/archive/refs/tags/v1.68.2.tar.gz"),
     )
 
     tf_http_archive(
@@ -805,12 +790,9 @@ def _tf_repositories():
 
     tf_http_archive(
         name = "pybind11_protobuf",
-        urls = tf_mirror_urls("https://github.com/pybind/pybind11_protobuf/archive/80f3440cd8fee124e077e2e47a8a17b78b451363.zip"),
-        sha256 = "c7ab64b1ccf9a678694a89035a8c865a693e4e872803778f91f0965c2f281d78",
-        strip_prefix = "pybind11_protobuf-80f3440cd8fee124e077e2e47a8a17b78b451363",
-        patch_file = [
-            "//third_party/pybind11_protobuf:remove_license.patch",
-        ],
+        urls = tf_mirror_urls("https://github.com/pybind/pybind11_protobuf/archive/f02a2b7653bc50eb5119d125842a3870db95d251.zip"),
+        sha256 = "3cf7bf0f23954c5ce6c37f0a215f506efa3035ca06e3b390d67f4cbe684dce23",
+        strip_prefix = "pybind11_protobuf-f02a2b7653bc50eb5119d125842a3870db95d251",
     )
 
     tf_http_archive(
@@ -888,17 +870,16 @@ def _tf_repositories():
     # third_party/py/riegeli) that are used in TF.
     tf_http_archive(
         name = "riegeli",
-        sha256 = "1d216d5c97fa60632143d209a1bb48c2a83788efdb876902e7bbc06396d5ee1f",
-        strip_prefix = "riegeli-5d75119232cd4f6db8dfa69a1503289f050e9643",
-        urls = tf_mirror_urls("https://github.com/google/riegeli/archive/5d75119232cd4f6db8dfa69a1503289f050e9643.zip"),
+        sha256 = "eb56368777297b23686ffdb1edbe96af85f88c74cba74a7557518fe3bb7a4aeb",
+        strip_prefix = "riegeli-dc364cecf108d151f52b0a810657e43451be0ebf",
+        urls = tf_mirror_urls("https://github.com/google/riegeli/archive/dc364cecf108d151f52b0a810657e43451be0ebf.zip"),
     )
 
     tf_http_archive(
         name = "riegeli_py",
-        sha256 = "1d216d5c97fa60632143d209a1bb48c2a83788efdb876902e7bbc06396d5ee1f",
-        patch_file = ["//third_party:riegeli_fix.patch"],
-        strip_prefix = "riegeli-5d75119232cd4f6db8dfa69a1503289f050e9643",
-        urls = tf_mirror_urls("https://github.com/google/riegeli/archive/5d75119232cd4f6db8dfa69a1503289f050e9643.zip"),
+        sha256 = "eb56368777297b23686ffdb1edbe96af85f88c74cba74a7557518fe3bb7a4aeb",
+        strip_prefix = "riegeli-dc364cecf108d151f52b0a810657e43451be0ebf",
+        urls = tf_mirror_urls("https://github.com/google/riegeli/archive/dc364cecf108d151f52b0a810657e43451be0ebf.zip"),
     )
 
     # Required by riegeli.
@@ -929,6 +910,7 @@ def _tf_repositories():
         name = "org_xprof",
         sha256 = "ff84f44bf87b2805fd6badc398b1889049f1d86d2478ecc466680c6939261afe",
         strip_prefix = "xprof-05e9e316c9cf8de6dd5fdcd8c841723fc1e8a20f",
+        patch_file = ["//third_party/xprof:xprof.patch"],
         urls = tf_mirror_urls("https://github.com/openxla/xprof/archive/05e9e316c9cf8de6dd5fdcd8c841723fc1e8a20f.zip"),
     )
 
