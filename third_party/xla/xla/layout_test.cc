@@ -241,28 +241,28 @@ TEST(Layout, LayoutToFromProto) {
 
 TEST(Layout, DimensionIsUniqueByDefault) {
   Layout layout({0, 1});
-  layout.add_dim_level_type(DIM_DENSE);
+  layout.set_dim_level_type(0, DIM_DENSE);
   EXPECT_TRUE(layout.dim_unique(0));
 
-  layout.add_dim_level_type(DIM_COMPRESSED);
+  layout.set_dim_level_type(1, DIM_COMPRESSED);
   EXPECT_TRUE(layout.dim_unique(1));
 }
 
 TEST(Layout, DimensionIsOrderedByDefault) {
   Layout layout({0, 1});
-  layout.add_dim_level_type(DIM_DENSE);
+  layout.set_dim_level_type(0, DIM_DENSE);
   EXPECT_TRUE(layout.dim_ordered(0));
 
-  layout.add_dim_level_type(DIM_COMPRESSED);
+  layout.set_dim_level_type(1, DIM_COMPRESSED);
   EXPECT_TRUE(layout.dim_ordered(1));
 }
 
 TEST(Layout, DeleteDimensionWorksForDeletingLastDimFromDenseLayout) {
   Layout layout({0, 1});
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_unique(false);
-  layout.add_dim_unique(true);
+  layout.set_dim_level_type(0, DIM_DENSE);
+  layout.set_dim_level_type(1, DIM_DENSE);
+  layout.set_dim_unique(0, false);
+  layout.set_dim_unique(1, true);
   ASSERT_TRUE(LayoutUtil::IsDense(layout));
   ASSERT_EQ(layout.minor_to_major().size(), 2);
   ASSERT_EQ(layout.dim_unique_size(), 2);
@@ -277,10 +277,10 @@ TEST(Layout, DeleteDimensionWorksForDeletingLastDimFromDenseLayout) {
 
 TEST(Layout, DeleteDimensionWorksForDeletingNonLastDimFromDenseLayout) {
   Layout layout({1, 0});
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_unique(false);
-  layout.add_dim_unique(true);
+  layout.set_dim_level_type(0, DIM_DENSE);
+  layout.set_dim_level_type(1, DIM_DENSE);
+  layout.set_dim_unique(0, false);
+  layout.set_dim_unique(1, true);
   ASSERT_TRUE(LayoutUtil::IsDense(layout));
   ASSERT_EQ(layout.minor_to_major().size(), 2);
   ASSERT_EQ(layout.dim_unique_size(), 2);
@@ -295,10 +295,10 @@ TEST(Layout, DeleteDimensionWorksForDeletingNonLastDimFromDenseLayout) {
 
 TEST(Layout, DeleteDimensionWorksForDeletingLastDimFromSparseLayout) {
   Layout layout({0, 1});
-  layout.add_dim_level_type(DIM_COMPRESSED);
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_unique(false);
-  layout.add_dim_unique(true);
+  layout.set_dim_level_type(0, DIM_COMPRESSED);
+  layout.set_dim_level_type(1, DIM_DENSE);
+  layout.set_dim_unique(0, false);
+  layout.set_dim_unique(1, true);
   ASSERT_TRUE(LayoutUtil::IsSparse(layout));
   ASSERT_EQ(layout.minor_to_major().size(), 2);
   ASSERT_EQ(layout.dim_unique_size(), 2);
@@ -313,10 +313,10 @@ TEST(Layout, DeleteDimensionWorksForDeletingLastDimFromSparseLayout) {
 
 TEST(Layout, DeleteDimensionWorksForDeletingNonLastDimFromSparseLayout) {
   Layout layout({1, 0});
-  layout.add_dim_level_type(DIM_COMPRESSED);
-  layout.add_dim_level_type(DIM_DENSE);
-  layout.add_dim_unique(false);
-  layout.add_dim_unique(true);
+  layout.set_dim_level_type(0, DIM_COMPRESSED);
+  layout.set_dim_level_type(1, DIM_DENSE);
+  layout.set_dim_unique(0, false);
+  layout.set_dim_unique(1, true);
   ASSERT_TRUE(LayoutUtil::IsSparse(layout));
   ASSERT_EQ(layout.minor_to_major().size(), 2);
   ASSERT_EQ(layout.dim_unique_size(), 2);
