@@ -83,8 +83,10 @@ namespace sdy = ::mlir::sdy;
 using sdy::AxisRefAttr;
 using sdy::DimensionShardingAttr;
 using sdy::kShardingAttr;
+using sdy::ManualAxesAttr;
 using sdy::ManualComputationOp;
 using sdy::MeshAttr;
+using sdy::NamedComputationOp;
 using sdy::SdyDialect;
 using sdy::TensorShardingAttr;
 using sdy::TensorShardingPerValueAttr;
@@ -213,7 +215,8 @@ void convertShardingsToStablehloShardings(
 
   if (mesh.getAxes().size() == manualAxes.region.size()) {
     // All operations in the body have fully manual sharding.
-    StringAttr fullyManualSharding = getStringAttr(HloSharding::Manual());
+    StringAttr fullyManualSharding =
+        StringAttr::get(context, HloSharding::Manual().ToString());
     op.getBody().front().walk<mlir::WalkOrder::PreOrder>(
         [&](Operation* opInBody) {
           if (mlir::isa<ManualComputationOp>(opInBody)) {
@@ -245,11 +248,36 @@ void convertShardingsToStablehloShardings(
           opInBody->setAttr(kXlaShardingAttr,
                             convertToHloShardingAttr(
                                 opInBody, shardingPerValue.getShardings(),
-                                getMeshAttr, getStringAttr, manualAxes.region));
+                                getMeshAttr, manualAxes.region));
           opInBody->removeAttr(kShardingAttr);
           return mlir::WalkResult::advance();
         });
   }
+
+  if (manualAxes.region.empty()) {
+    return;
+  }
+  ManualAxesAttr manualAxesAttr =
+      ManualAxesAttr::get(context, manualAxes.region);
+
+  op.getBody().front().walk<mlir::WalkOrder::PreOrder>(
+      [&](Operation* opInBody) {
+        if (NamedComputationOp namedComputationOp =
+                mlir::dyn_cast<NamedComputationOp>(opInBody)) {
+          namedComputationOp->setAttr(kManualAxes, manualAxesAttr);
+
+          if (!namedComputationOp.getInShardings().has_value()) {
+            namedComputationOp.setInShardingsAttr(
+                TensorShardingPerValueAttr::getFullyOpen(
+                    context, namedComputationOp.getOperandTypes(), meshName));
+          }
+          if (!namedComputationOp.getOutShardings().has_value()) {
+            namedComputationOp.setOutShardingsAttr(
+                TensorShardingPerValueAttr::getFullyOpen(
+                    context, namedComputationOp.getResultTypes(), meshName));
+          }
+        }
+      });
 }
 
 // Converts `op` to the pattern that XLA recognizes.
