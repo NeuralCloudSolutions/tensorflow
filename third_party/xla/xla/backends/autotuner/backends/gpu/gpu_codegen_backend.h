@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_BACKEND_H_
-#define XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_BACKEND_H_
+#ifndef XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_CODEGEN_BACKEND_H_
+#define XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_CODEGEN_BACKEND_H_
 
 #include <memory>
 #include <optional>
@@ -23,31 +23,39 @@ limitations under the License.
 
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "xla/backends/autotuner/backend.h"
+#include "xla/backends/autotuner/codegen_backend.h"
 #include "xla/hlo/ir/hlo_instruction.h"
 #include "xla/hlo/ir/hlo_module.h"
 #include "xla/service/compiler.h"
 #include "xla/service/executable.h"
+#include "xla/stream_executor/stream_executor.h"
 #include "xla/tsl/platform/statusor.h"
 #include "xla/xla.pb.h"
 
 namespace xla {
+namespace gpu {
 
 // Abstract base class for GPU backends, implementing the Backend interface.
-class GpuBackend : public Backend {
+class GpuCodegenBackend : public CodegenBackend {
  public:
   // target_config, debug_options and compiler should outlive the backend.
-  GpuBackend(absl::string_view name,
-             const Compiler::TargetConfig* target_config,
-             const DebugOptions* debug_options, Compiler* compiler)
+  GpuCodegenBackend(absl::string_view name,
+                    const Compiler::TargetConfig* target_config,
+                    const DebugOptions* debug_options,
+                    stream_executor::StreamExecutor* stream_executor,
+                    Compiler* compiler)
       : name_(name),
         target_config_(*target_config),
         debug_options_(*debug_options),
+        stream_executor_(*stream_executor),
         compiler_(compiler) {}
 
   absl::string_view name() const override { return name_; }
 
   const Compiler::TargetConfig& target_config() const { return target_config_; }
+  stream_executor::StreamExecutor& stream_executor() {
+    return stream_executor_;
+  }
   const DebugOptions& debug_options() const { return debug_options_; }
 
   absl::StatusOr<std::unique_ptr<Executable>> Compile(
@@ -80,12 +88,14 @@ class GpuBackend : public Backend {
   std::string name_;
   const Compiler::TargetConfig& target_config_;
   const DebugOptions& debug_options_;
+  stream_executor::StreamExecutor& stream_executor_;
   // TODO(b/407494653): remove compiler when we don't need to run any HLO passes
   // and the codegen backend can directly produce an executable without a
   // compiler instance.
   Compiler* compiler_;
 };
 
+}  // namespace gpu
 }  // namespace xla
 
-#endif  // XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_BACKEND_H_
+#endif  // XLA_BACKENDS_AUTOTUNER_BACKENDS_GPU_GPU_CODEGEN_BACKEND_H_
